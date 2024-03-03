@@ -1,5 +1,5 @@
-// TODO 2: Import 'dartssh2' package
-
+// TODO 2 Done: Import 'dartssh2' package
+import 'package:dartssh2/dartssh2.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -11,7 +11,7 @@ class SSH {
   late String _username;
   late String _passwordOrKey;
   late String _numberOfRigs;
-  // SSHClient? _client;
+  SSHClient? _client;
 
   // Initialize connection details from shared preferences
   Future<void> initConnectionDetails() async {
@@ -28,8 +28,16 @@ class SSH {
     await initConnectionDetails();
 
     try {
-      // TODO 3: Connect to Liquid Galaxy system, using examples from https://pub.dev/packages/dartssh2#:~:text=freeBlocks%7D%27)%3B-,%F0%9F%AA%9C%20Example%20%23,-SSH%20client%3A
+      // TODO 3 Done: Connect to Liquid Galaxy system, using examples from https://pub.dev/packages/dartssh2#:~:text=freeBlocks%7D%27)%3B-,%F0%9F%AA%9C%20Example%20%23,-SSH%20client%3A
+      final socket = await SSHSocket.connect(_host, int.parse(_port));
 
+      _client = SSHClient(
+        socket,
+        username: 'root',
+        onPasswordRequest: () => _passwordOrKey,
+      );
+      print(
+          'host: $_host, port: $_port, username: $_username, password: $_passwordOrKey');
       return true;
     } on SocketException catch (e) {
       print('Failed to connect: $e');
@@ -37,19 +45,83 @@ class SSH {
     }
   }
 
-  // Future<SSHSession?> execute() async {
-  //   try {
-  //     if (_client == null) {
-  //       print('SSH client is not initialized.');
-  //       return null;
-  //     }
-  //     //   TODO 4: Execute a demo command: echo "search=Lleida" >/tmp/query.txt
-  //   } catch (e) {
-  //     print('An error occurred while executing the command: $e');
-  //     return null;
-  //   }
-  // }
+  Future<SSHSession?> execute() async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return null;
+      }
+      //   TODO 4 Done: Execute a demo command: echo "search=Lleida" >/tmp/query.txt
+      final execResult =
+          await _client!.execute('echo "search=Spain" >/tmp/query.txt');
+      print('Command 4 executed');
+      return execResult;
+    } catch (e) {
+      print('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
 
   // DEMO above, all the other functions below
 //   TODO 11: Make functions for each of the tasks in the home screen
+  Future<SSHSession?> executeSearch(String search) async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return null;
+      }
+      final execResult = await _client!.execute('echo "search=$search" >/tmp/query.txt');
+      print('Command executed');
+      return execResult;
+    } catch (e) {
+      print('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
+
+  Future<SSHSession?> executeFlyTo(String flyTo) async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return null;
+      }
+      final execResult = await _client!.execute('echo "flyto=$flyTo" >/tmp/query.txt');
+      print('Command executed');
+      return execResult;
+    } catch (e) {
+      print('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
+
+  Future<SSHSession?> executePlayTour(String playTour) async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return null;
+      }
+      final execResult = await _client!.execute('echo "playtour=$playTour" >/tmp/query.txt');
+      print('Command executed');
+      return execResult;
+    } catch (e) {
+      print('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
+
+  Future<SSHSession?> executeStopTour() async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return null;
+      }
+      final execResult = await _client!.execute('echo "stoptour" >/tmp/query.txt');
+      print('Command executed');
+      return execResult;
+    } catch (e) {
+      print('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
+
 }

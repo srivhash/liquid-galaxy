@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lg_connection/components/connection_flag.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// TODO 5: Import the ssh file and the dartssh2 package
+// TODO 5 Done: Import the ssh file and the dartssh2 package
+import 'package:dartssh2/dartssh2.dart';
+import 'package:lg_connection/connections/ssh.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -12,24 +14,24 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool connectionStatus = false;
-  // TODO 8: Declare SSH Instance
-  // late SSH ssh;
+  // TODO 8 done: Declare SSH Instance
+  late SSH ssh;
 
   Future<void> _connectToLG() async {
     // TODO 10: Connect to Liquid Galaxy Rig
-    // bool? result = await ssh.connectToLG();
-    // setState(() {
-    //   connectionStatus = result!;
-    // });
+    bool? result = await ssh.connectToLG();
+    setState(() {
+      connectionStatus = result!;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    // TODO 9: Initialize SSH Instance and uncomment _connectToLG()
-    // ssh = SSH();
+    // TODO 9 Done: Initialize SSH Instance and uncomment _connectToLG()
+    ssh = SSH();
     _loadSettings();
-    // _connectToLG();
+    _connectToLG();
   }
 
   final TextEditingController _ipController = TextEditingController();
@@ -170,15 +172,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 onPressed: () async {
                   await _saveSettings();
-                  // TODO 6: Initalize SSH Instance and call connectToLG() function
-                  // SSH ssh = SSH();
-                  // bool? result = await ssh.connectToLG();
-                  // if (result == true) {
-                  //   setState(() {
-                  //     connectionStatus = true;
-                  //   });
-                  //   print('Connected to LG successfully');
-                  // }
+                  // TODO 6 Done: Initalize SSH Instance and call connectToLG() function
+                  SSH ssh = SSH();
+                  bool? result = await ssh.connectToLG();
+                  if (result == true) {
+                    setState(() {
+                      connectionStatus = true;
+                    });
+                    print('Connected to LG successfully');
+                  }
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
@@ -221,16 +223,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 onPressed: () async {
-                  // TODO 7: Initialize SSH and execute the demo command and test
-                  // SSH ssh =
-                  //     SSH(); //Re-initialization of the SSH instance to avoid errors for beginners
-                  // await ssh.connectToLG();
-                  // SSHSession? execResult = await ssh.execute();
-                  // if (execResult != null) {
-                  //   print('Command executed successfully');
-                  // } else {
-                  //   print('Failed to execute command');
-                  // }
+                  // TODO 7 Done: Initialize SSH and execute the demo command and test
+                  SSH ssh =
+                      SSH(); //Re-initialization of the SSH instance to avoid errors for beginners
+                  await ssh.connectToLG();
+                  SSHSession? execResult = await ssh.execute();
+                  if (execResult != null) {
+                    print('Command executed successfully');
+                  } else {
+                    print('Failed to execute command');
+                  }
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
