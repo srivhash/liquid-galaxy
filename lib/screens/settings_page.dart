@@ -18,7 +18,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late SSH ssh;
 
   Future<void> _connectToLG() async {
-    // TODO 10: Connect to Liquid Galaxy Rig
+    // TODO 10 Done: Connect to Liquid Galaxy Rig
     bool? result = await ssh.connectToLG();
     setState(() {
       connectionStatus = result!;

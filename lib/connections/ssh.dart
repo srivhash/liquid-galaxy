@@ -33,7 +33,7 @@ class SSH {
 
       _client = SSHClient(
         socket,
-        username: 'root',
+        username: _username,
         onPasswordRequest: () => _passwordOrKey,
       );
       print(
@@ -64,64 +64,64 @@ class SSH {
 
   // DEMO above, all the other functions below
 //   TODO 11: Make functions for each of the tasks in the home screen
-  Future<SSHSession?> executeSearch(String search) async {
-    try {
-      if (_client == null) {
-        print('SSH client is not initialized.');
-        return null;
-      }
-      final execResult = await _client!.execute('echo "search=$search" >/tmp/query.txt');
-      print('Command executed');
-      return execResult;
-    } catch (e) {
-      print('An error occurred while executing the command: $e');
-      return null;
-    }
-  }
+  // Future<SSHSession?> executeSearch(String search) async {
+  //   try {
+  //     if (_client == null) {
+  //       print('SSH client is not initialized.');
+  //       return null;
+  //     }
+  //     final execResult = await _client!.execute('echo "search=$search" >/tmp/query.txt');
+  //     print('Command executed');
+  //     return execResult;
+  //   } catch (e) {
+  //     print('An error occurred while executing the command: $e');
+  //     return null;
+  //   }
+  // }
 
-  Future<SSHSession?> executeFlyTo(String flyTo) async {
-    try {
-      if (_client == null) {
-        print('SSH client is not initialized.');
-        return null;
-      }
-      final execResult = await _client!.execute('echo "flyto=$flyTo" >/tmp/query.txt');
-      print('Command executed');
-      return execResult;
-    } catch (e) {
-      print('An error occurred while executing the command: $e');
-      return null;
-    }
-  }
+  // Future<SSHSession?> executeFlyTo(String flyTo) async {
+  //   try {
+  //     if (_client == null) {
+  //       print('SSH client is not initialized.');
+  //       return null;
+  //     }
+  //     final execResult = await _client!.execute('echo "flyto=$flyTo" >/tmp/query.txt');
+  //     print('Command executed');
+  //     return execResult;
+  //   } catch (e) {
+  //     print('An error occurred while executing the command: $e');
+  //     return null;
+  //   }
+  // }
 
-  Future<SSHSession?> executePlayTour(String playTour) async {
-    try {
-      if (_client == null) {
-        print('SSH client is not initialized.');
-        return null;
-      }
-      final execResult = await _client!.execute('echo "playtour=$playTour" >/tmp/query.txt');
-      print('Command executed');
-      return execResult;
-    } catch (e) {
-      print('An error occurred while executing the command: $e');
-      return null;
-    }
-  }
+  // Future<SSHSession?> executePlayTour(String playTour) async {
+  //   try {
+  //     if (_client == null) {
+  //       print('SSH client is not initialized.');
+  //       return null;
+  //     }
+  //     final execResult = await _client!.execute('echo "playtour=$playTour" >/tmp/query.txt');
+  //     print('Command executed');
+  //     return execResult;
+  //   } catch (e) {
+  //     print('An error occurred while executing the command: $e');
+  //     return null;
+  //   }
+  // }
 
-  Future<SSHSession?> executeStopTour() async {
-    try {
-      if (_client == null) {
-        print('SSH client is not initialized.');
-        return null;
-      }
-      final execResult = await _client!.execute('echo "stoptour" >/tmp/query.txt');
-      print('Command executed');
-      return execResult;
-    } catch (e) {
-      print('An error occurred while executing the command: $e');
-      return null;
-    }
-  }
+  // Future<SSHSession?> executeStopTour() async {
+  //   try {
+  //     if (_client == null) {
+  //       print('SSH client is not initialized.');
+  //       return null;
+  //     }
+  //     final execResult = await _client!.execute('echo "stoptour" >/tmp/query.txt');
+  //     print('Command executed');
+  //     return execResult;
+  //   } catch (e) {
+  //     print('An error occurred while executing the command: $e');
+  //     return null;
+  //   }
+  // }
 
 }
