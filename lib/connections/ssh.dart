@@ -64,20 +64,38 @@ class SSH {
 
   // DEMO above, all the other functions below
 //   TODO 11: Make functions for each of the tasks in the home screen
-  // Future<SSHSession?> executeSearch(String search) async {
-  //   try {
-  //     if (_client == null) {
-  //       print('SSH client is not initialized.');
-  //       return null;
-  //     }
-  //     final execResult = await _client!.execute('echo "search=$search" >/tmp/query.txt');
-  //     print('Command executed');
-  //     return execResult;
-  //   } catch (e) {
-  //     print('An error occurred while executing the command: $e');
-  //     return null;
-  //   }
-  // }
+  Future<bool> rebootLG() async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return false;
+      }
+      bool res = true;
+      for (var i = 1; i <= int.parse(_numberOfRigs); i++) {
+        final execResult = await _client!.execute(
+            'sshpass -p ${_passwordOrKey} ssh -t lg$i "echo ${_passwordOrKey} | sudo -S reboot');
+        // res = res && execResult;
+      }
+      return true;
+    } catch (error) {
+      print("Error occurred while rebooting: $error");
+      return false;
+    }
+  }
+  Future<SSHSession?> searchPlace(String search) async {
+    try {
+      if (_client == null) {
+        print('SSH client is not initialized.');
+        return null;
+      }
+      final execResult = await _client!.execute('echo "search=$search" > /tmp/query.txt');
+      print('Command executed');
+      return execResult;
+    } catch (e) {
+      print('An error occurred while executing the command: $e');
+      return null;
+    }
+  }
 
   // Future<SSHSession?> executeFlyTo(String flyTo) async {
   //   try {
@@ -123,5 +141,4 @@ class SSH {
   //     return null;
   //   }
   // }
-
 }
