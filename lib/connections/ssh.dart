@@ -64,22 +64,41 @@ class SSH {
 
   // DEMO above, all the other functions below
 //   TODO 11: Make functions for each of the tasks in the home screen
-  Future<bool> rebootLG() async {
+  // Future<bool> rebootLG() async {
+  //   try {
+  //     if (_client == null) {
+  //       print('SSH client is not initialized.');
+  //       return false;
+  //     }
+  //     bool res = true;
+  //     for (var i = 1; i <= int.parse(_numberOfRigs); i++) {
+  //       final execResult = await _client!.execute(
+  //           'sshpass -p ${_passwordOrKey} ssh -t lg$i "echo ${_passwordOrKey} | sudo -S reboot');
+  //       // res = res && execResult;
+  //     }
+  //     return true;
+  //   } catch (error) {
+  //     print("Error occurred while rebooting: $error");
+  //     return false;
+  //   }
+  // }
+  Future<SSHSession?> rebootLG() async {
     try {
       if (_client == null) {
         print('SSH client is not initialized.');
-        return false;
+        return null;
       }
-      bool res = true;
-      for (var i = 1; i <= int.parse(_numberOfRigs); i++) {
-        final execResult = await _client!.execute(
-            'sshpass -p ${_passwordOrKey} ssh -t lg$i "echo ${_passwordOrKey} | sudo -S reboot');
-        // res = res && execResult;
+
+      for (int i = int.parse(_numberOfRigs); i > 0; i--) {
+        await _client!.execute(
+            'sshpass -p $_passwordOrKey ssh -t lg$i "echo $_passwordOrKey | sudo -S reboot" ');
+        print(
+            'sshpass -p $_passwordOrKey ssh -t lg$i "echo $_passwordOrKey | sudo -S reboot"');
       }
-      return true;
-    } catch (error) {
-      print("Error occurred while rebooting: $error");
-      return false;
+      return null;
+    } catch (e) {
+      print('An error occurred while executing the command: Se');
+      return null;
     }
   }
   Future<SSHSession?> searchPlace(String search) async {
