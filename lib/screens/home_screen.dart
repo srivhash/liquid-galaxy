@@ -52,51 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-              padding: const EdgeInsets.only(top: 10, left: 10),
-              child: ConnectionFlag(
-                status: connectionStatus,
-              )),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: ReusableCard(
-                    colour: Colors.blue,
-                    onPress: () async {
-                      // TODO 14 done: Implement relaunchLG() as async task
-                      await ssh.rebootLG();
-                    },
-                    cardChild: const Center(
-                      child: Text(
-                        'RELAUNCH LG',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ReusableCard(
-                    colour: Colors.blue,
-                    onPress: () async {
-                      // TODO 15: Implement shutdownLG() as async task
-                      // ssh.shutdownLG();
-                    },
-                    cardChild: const Center(
-                      child: Text(
-                        'SHUT DOWN LG',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
+            padding: const EdgeInsets.only(top: 10, left: 10),
+            child: Image.asset('assets/images/LIQUIDGALAXYLOGO.png',
+              width: 100,
+              height: 100),
+     // Add this line
+          ),
+          ConnectionFlag(
+            status: connectionStatus,
           ),
           //
           Expanded(
@@ -106,12 +69,39 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ReusableCard(
                     colour: Colors.blue,
                     onPress: () async {
-                      // TODO 16: Implement clearKML() as async task and test
-                      // ssh.clearKML();
+                      // Show confirmation dialog
+                      final bool confirm = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Confirm Reboot'),
+                            content: const Text('Do you want to reboot the LG system?'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false); // User cancels
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true); // User confirms
+                                },
+                                child: const Text('Reboot'),
+                              ),
+                            ],
+                          );
+                        },
+                      ) ?? false; // In case showDialog is dismissed by tapping outside of it
+
+                      // Proceed with reboot if confirmed
+                      if (confirm) {
+                        ssh.rebootLG();
+                      }
                     },
                     cardChild: const Center(
                       child: Text(
-                        'CLEAN KML',
+                        'REBOOT LG',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
@@ -125,12 +115,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ReusableCard(
                     colour: Colors.blue,
                     onPress: () async {
-                      // TODO 21: Implement rebootLG() as async task and test
-                      // ssh.rebootLG();
+                      // TODO 16: Implement clearKML() as async task and test
+                      // ssh.clearKML();
+                      ssh.searchPlace(searchPlace);
                     },
                     cardChild: const Center(
                       child: Text(
-                        'REBOOT LG',
+                        'HOME CITY',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
@@ -151,12 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     colour: Colors.blue,
                     onPress: () async {
                       // TODO 19 done: Implement searchPlace(String searchPlace) as async task and test
-                      ssh.searchPlace(searchPlace);
+                      // ssh.searchPlace(searchPlace);
                     },
                     cardChild: const Center(
                       child: Text(
                         // TODO 18 done : Add searchPlace variable to the button
-                        'SEARCH = $searchPlace',
+                        'ORBIT CITY',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
@@ -175,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     cardChild: const Center(
                       child: Text(
-                        'SEND KML',
+                        'PRINT BUBBLE',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 40,
