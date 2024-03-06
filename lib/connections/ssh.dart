@@ -87,10 +87,10 @@ class SSH {
       await cleanKML();
 
       String orbitKML = OrbitEntity.buildOrbit(OrbitEntity.tag(LookAtEntity(
-          lng: 0.6222, lat: 41.6167, range: 7000, tilt: 60, heading: 0)));
+          lng: 78.4772, lat: 17.4065, range: 7000, tilt: 45, heading: 0)));
 
-      File inputFile = await makeFile("OrbitKML", orbitKML);
-      await uploadKMLFile(inputFile, "OrbitKML", "Task_Orbit");
+      File inputFile = await makeFile("OrbitKML2", orbitKML);
+      await uploadKMLFile(inputFile, "OrbitKML2", "Task_Orbit");
     } catch (e) {
       print("Error");
     }
@@ -123,6 +123,19 @@ class SSH {
     try {
       final v = await _client!.execute(
           "echo 'http://lg1:81/$kmlName.kml' > /var/www/html/kmls.txt");
+
+      if (task == "Task_Orbit") {
+        await beginOrbiting();
+      }
+    } catch (error) {
+      print("error");
+      await loadKML(kmlName, task);
+    }
+  }
+  loadSlaveKML(String kmlName, String task) async {
+    try {
+      final v = await _client!.execute(
+          "echo 'http://lg2:81/$kmlName.kml' > /var/www/html/kmls.txt");
 
       if (task == "Task_Orbit") {
         await beginOrbiting();
@@ -181,7 +194,6 @@ class SSH {
       await cleanKML();
     }
   }
-
   stopOrbit() async {
     try {
       await _client!.run('echo "exittour=true" > /tmp/query.txt');
@@ -197,5 +209,89 @@ class SSH {
       stopOrbit();
     }
   }
+
+  cleanSlaves() async {
+    try {
+      await _client!.run("echo '' > /var/www/html/kml/slave_2.kml");
+      await _client!.run("echo '' > /var/www/html/kml/slave_3.kml");
+    } catch (error) {
+      await cleanSlaves();
+    }
+  }
+  
+  // int infoSlave=2;
+  Future<void> sendKMLToSlave() async {
+    try {
+      String command = """chmod 777 /var/www/html/kml/slave_2.kml; echo '<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+  <Document>
+    <name>historic.kml</name> 
+    <Style id="purple_paddle">
+      <BalloonStyle>
+        <text>\$[description]</text>
+        <bgColor>ffffffff</bgColor>
+      </BalloonStyle>
+    </Style>
+    <Placemark id="0A7ACC68BF23CB81B354">
+      <name>Baloon</name>
+      <Snippet maxLines="0"></Snippet>
+      <description>
+      <![CDATA[<!-- BalloonStyle background color: ffffffff -->
+        <table width="400" height="300" align="left">
+          <tr>
+            <td colspan="2" align="center">
+              <h2> IIIT Hyderabad</h2>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" align="center">
+              <h1>Hyderabad, India</h1>
+            </td>
+          </tr>
+        </table>]]>
+      </description>
+      <LookAt>
+        <longitude>78.4772</longitude>
+        <latitude>17.4065</latitude>
+        <altitude>0</altitude>
+        <heading>0</heading>
+        <tilt>0</tilt>
+        <range>24000</range>
+      </LookAt>
+      <styleUrl>#purple_paddle</styleUrl>
+      <gx:balloonVisibility>1</gx:balloonVisibility>
+      <Point>
+        <coordinates>-17.841486,28.638478,0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>
+' > /var/www/html/kml/slave_2.kml""";
+      await _client!
+          .execute(command);
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
+  }
+
+  setRefresh() async {
+    try {
+      for (var i = 2; i <= int.parse(_numberOfRigs); i++) {
+        String search = '<href>##LG_PHPIFACE##kml\\/slave_$i.kml<\\/href>';
+        String replace =
+            '<href>##LG_PHPIFACE##kml\\/slave_$i.kml<\\/href><refreshMode>onInterval<\\/refreshMode><refreshInterval>2<\\/refreshInterval>';
+
+        await _client!.execute(
+            'sshpass -p $_passwordOrKey ssh -t lg$i \'echo $_passwordOrKey | sudo -S sed -i "s/$replace/$search/" ~/earth/kml/slave/myplaces.kml\'');
+        await _client!.execute(
+            'sshpass -p $_passwordOrKey ssh -t lg$i \'echo $_passwordOrKey | sudo -S sed -i "s/$search/$replace/" ~/earth/kml/slave/myplaces.kml\'');
+      }
+    } catch (error) {
+      print("ERROR");
+    }
+  }
+
+  
 
 }

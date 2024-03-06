@@ -117,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPress: () async {
                       // TODO 16: Implement clearKML() as async task and test
                       // ssh.clearKML();
+                      await ssh.setRefresh();
                       ssh.searchPlace(searchPlace);
                     },
                     cardChild: const Center(
@@ -163,6 +164,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPress: () async {
                       //   TODO 20: Implement sendKML() as async task
                       // ssh.sendKML();
+                      await ssh.cleanKML();
+                      await ssh.setRefresh();
+                      await ssh.cleanSlaves();
+                      await ssh.sendKMLToSlave();
+                      await ssh.loadSlaveKML("slave_2","not");
+                      print("printing name in display");
                     },
                     cardChild: const Center(
                       child: Text(
