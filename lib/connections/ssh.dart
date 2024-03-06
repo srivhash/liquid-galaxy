@@ -2,6 +2,11 @@
 import 'package:dartssh2/dartssh2.dart';
 import 'dart:async';
 import 'dart:io';
+import 'dart:ffi';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import './look_at_entity.dart';
+import './orbit_entity.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,34 +68,88 @@ class SSH {
   }
 
   // DEMO above, all the other functions below
-//   TODO 11: Make functions for each of the tasks in the home screen
-  // Future<bool> rebootLG() async {
-  //   try {
-  //     if (_client == null) {
-  //       print('SSH client is not initialized.');
-  //       return false;
-  //     }
-  //     bool res = true;
-  //     for (var i = 1; i <= int.parse(_numberOfRigs); i++) {
-  //       final execResult = await _client!.execute(
-  //           'sshpass -p ${_passwordOrKey} ssh -t lg$i "echo ${_passwordOrKey} | sudo -S reboot');
-  //       // res = res && execResult;
-  //     }
-  //     return true;
-  //   } catch (error) {
-  //     print("Error occurred while rebooting: $error");
-  //     return false;
-  //   }
-  // }
+  makeFile(String filename, String content) async {
+    try {
+      var localPath = await getApplicationDocumentsDirectory();
+      File localFile = File('${localPath.path}/${filename}.kml');
+      await localFile.writeAsString(content);
+
+      return localFile;
+    } catch (e) {
+      return null;
+    }
+  }
+  Future<void> orbitCity() async {
+    try {
+      if (_client == null) {
+        print('MESSAGE :: SSH CLIENT IS NOT INITIALISED');
+        return;
+      }
+
+      await cleanKML();
+
+      String orbitKML = OrbitEntity.buildOrbit(OrbitEntity.tag(LookAtEntity(
+          lng: 0.6222, lat: 41.6167, range: 7000, tilt: 60, heading: 0)));
+
+      File inputFile = await makeFile("OrbitKML", orbitKML);
+      await uploadKMLFile(inputFile, "OrbitKML", "Task_Orbit");
+    } catch (e) {
+      print("Error");
+    }
+  }
+  uploadKMLFile(File inputFile, String kmlName, String task) async {
+    try {
+      bool uploading = true;
+      final sftp = await _client!.sftp();
+      final file = await sftp.open('/var/www/html/$kmlName.kml',
+          mode: SftpFileOpenMode.create |
+          SftpFileOpenMode.truncate |
+          SftpFileOpenMode.write);
+      var fileSize = await inputFile.length();
+      file.write(inputFile.openRead().cast(), onProgress: (progress) async {
+        if (fileSize == progress) {
+          uploading = false;
+          if (task == "Task_Orbit") {
+            await loadKML("OrbitKML", task);
+          } else if (task == "Task_Balloon") {
+            await loadKML("BalloonKML", task);
+          }
+        }
+      });
+    } catch (e) {
+      print("Error");
+    }
+  }
+
+  loadKML(String kmlName, String task) async {
+    try {
+      final v = await _client!.execute(
+          "echo 'http://lg1:81/$kmlName.kml' > /var/www/html/kmls.txt");
+
+      if (task == "Task_Orbit") {
+        await beginOrbiting();
+      }
+    } catch (error) {
+      print("error");
+      await loadKML(kmlName, task);
+    }
+  }
+
+  beginOrbiting() async {
+    try {
+      final res = await _client!.run('echo "playtour=Orbit" > /tmp/query.txt');
+    } catch (error) {
+      await beginOrbiting();
+    }
+  }
   Future<SSHSession?> rebootLG() async {
     try {
       if (_client == null) {
         print('SSH client is not initialized.');
         return null;
       }
-
       for (int i = int.parse(_numberOfRigs); i > 0; i--) {
-        await _client!.execute(
+        _client!.execute(
             'sshpass -p $_passwordOrKey ssh -t lg$i "echo $_passwordOrKey | sudo -S reboot" ');
         print(
             'sshpass -p $_passwordOrKey ssh -t lg$i "echo $_passwordOrKey | sudo -S reboot"');
@@ -115,49 +174,30 @@ class SSH {
       return null;
     }
   }
+  cleanKML() async {
+    try {
+      await stopOrbit();
+      await _client!.run("echo '' > /tmp/query.txt");
+      await _client!.run("echo '' > /var/www/html/kmls.txt");
+    } catch (error) {
+      await cleanKML();
+    }
+  }
 
-  // Future<SSHSession?> executeFlyTo(String flyTo) async {
-  //   try {
-  //     if (_client == null) {
-  //       print('SSH client is not initialized.');
-  //       return null;
-  //     }
-  //     final execResult = await _client!.execute('echo "flyto=$flyTo" >/tmp/query.txt');
-  //     print('Command executed');
-  //     return execResult;
-  //   } catch (e) {
-  //     print('An error occurred while executing the command: $e');
-  //     return null;
-  //   }
-  // }
+  stopOrbit() async {
+    try {
+      await _client!.run('echo "exittour=true" > /tmp/query.txt');
+    } catch (error) {
+      stopOrbit();
+    }
+  }
 
-  // Future<SSHSession?> executePlayTour(String playTour) async {
-  //   try {
-  //     if (_client == null) {
-  //       print('SSH client is not initialized.');
-  //       return null;
-  //     }
-  //     final execResult = await _client!.execute('echo "playtour=$playTour" >/tmp/query.txt');
-  //     print('Command executed');
-  //     return execResult;
-  //   } catch (e) {
-  //     print('An error occurred while executing the command: $e');
-  //     return null;
-  //   }
-  // }
+  startOrbit() async {
+    try {
+      await _client!.run('echo "playtour=Orbit" > /tmp/query.txt');
+    } catch (error) {
+      stopOrbit();
+    }
+  }
 
-  // Future<SSHSession?> executeStopTour() async {
-  //   try {
-  //     if (_client == null) {
-  //       print('SSH client is not initialized.');
-  //       return null;
-  //     }
-  //     final execResult = await _client!.execute('echo "stoptour" >/tmp/query.txt');
-  //     print('Command executed');
-  //     return execResult;
-  //   } catch (e) {
-  //     print('An error occurred while executing the command: $e');
-  //     return null;
-  //   }
-  // }
 }

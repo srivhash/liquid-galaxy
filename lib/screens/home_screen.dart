@@ -142,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     colour: Colors.blue,
                     onPress: () async {
                       // TODO 19 done: Implement searchPlace(String searchPlace) as async task and test
-                      // ssh.searchPlace(searchPlace);
+                      ssh.orbitCity();
                     },
                     cardChild: const Center(
                       child: Text(
