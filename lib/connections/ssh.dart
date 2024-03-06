@@ -87,8 +87,8 @@ class SSH {
       await cleanKML();
 
       String orbitKML = OrbitEntity.buildOrbit(OrbitEntity.tag(LookAtEntity(
-          lng: 0.6222, lat: 41.6167, range: 7000, tilt: 60, heading: 0)));
-
+          lng: 78.4772, lat: 17.4065, range: 7000, tilt: 45, heading: 0)));
+      // 17.4065° N, 78.4772° E
       File inputFile = await makeFile("OrbitKML", orbitKML);
       await uploadKMLFile(inputFile, "OrbitKML", "Task_Orbit");
     } catch (e) {
