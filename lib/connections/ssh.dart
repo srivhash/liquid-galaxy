@@ -8,8 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './look_at_entity.dart';
 import './orbit_entity.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 class SSH {
   late String _host;
   late String _port;
