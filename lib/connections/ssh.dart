@@ -237,10 +237,10 @@ class SSH {
       <Snippet maxLines="0"></Snippet>
       <description>
       <![CDATA[<!-- BalloonStyle background color: ffffffff -->
-        <table width="300" height="200" align="left">
+        <table width="400" height="200" align="left">
           <tr>
             <td colspan="2" align="center">
-              <h2> IIIT Hyderabad</h2>
+              <h1> ASHUTOSH SRIVASTAVA</h1>
             </td>
           </tr>
           <tr>
