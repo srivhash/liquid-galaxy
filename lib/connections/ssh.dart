@@ -2,7 +2,6 @@
 import 'package:dartssh2/dartssh2.dart';
 import 'dart:async';
 import 'dart:io';
-import 'dart:ffi';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './look_at_entity.dart';
