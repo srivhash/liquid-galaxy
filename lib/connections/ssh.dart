@@ -237,7 +237,7 @@ class SSH {
       <Snippet maxLines="0"></Snippet>
       <description>
       <![CDATA[<!-- BalloonStyle background color: ffffffff -->
-        <table width="400" height="300" align="left">
+        <table width="300" height="200" align="left">
           <tr>
             <td colspan="2" align="center">
               <h2> IIIT Hyderabad</h2>
@@ -281,7 +281,9 @@ class SSH {
         String search = '<href>##LG_PHPIFACE##kml\\/slave_$i.kml<\\/href>';
         String replace =
             '<href>##LG_PHPIFACE##kml\\/slave_$i.kml<\\/href><refreshMode>onInterval<\\/refreshMode><refreshInterval>2<\\/refreshInterval>';
-
+        print('sshpass -p $_passwordOrKey ssh -t lg$i \'echo $_passwordOrKey | sudo -S sed -i "s/$replace/$search/" ~/earth/kml/slave/myplaces.kml\'');
+        print('sshpass -p $_passwordOrKey ssh -t lg$i \'echo $_passwordOrKey | sudo -S sed -i "s/$search/$replace/" ~/earth/kml/slave/myplaces.kml\'');
+      
         await _client!.execute(
             'sshpass -p $_passwordOrKey ssh -t lg$i \'echo $_passwordOrKey | sudo -S sed -i "s/$replace/$search/" ~/earth/kml/slave/myplaces.kml\'');
         await _client!.execute(

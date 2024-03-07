@@ -96,6 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       // Proceed with reboot if confirmed
                       if (confirm) {
+                        ssh.cleanKML();
+                        ssh.cleanSlaves();
                         ssh.rebootLG();
                       }
                     },
@@ -117,7 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPress: () async {
                       // TODO 16: Implement clearKML() as async task and test
                       // ssh.clearKML();
-                      await ssh.setRefresh();
                       ssh.searchPlace(searchPlace);
                     },
                     cardChild: const Center(
